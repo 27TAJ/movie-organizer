@@ -1,8 +1,10 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.io.*;
 
-public class MovieCollection
+
+public class MovieCollection implements Serializable
 {
     private List<Movie> movies;
 
@@ -56,5 +58,52 @@ public class MovieCollection
     {
         return movies;
     }
+
+    public static MovieCollection loadMovieCollection()
+    {
+        return deserializeCollection("movieCollection.ser");
+    }
+
+    public void saveMovieCollection()
+    {
+        serializeCollection("movieCollection.ser");
+    }
+
+    public void serializeCollection(String filename)
+    {
+        try (FileOutputStream fileOut = new FileOutputStream(filename); 
+        ObjectOutputStream out = new ObjectOutputStream(fileOut);)
+        {
+            out.writeObject(this);
+            System.out.println("Movie Collection serialized into " + filename);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static MovieCollection deserializeCollection(String filename)
+    {
+        File file = new File(filename);
+        if (!file.exists()) 
+        {
+            System.out.println("File " + filename + " does not exist. Making a new collection!");
+            return new MovieCollection();
+        }
+    
+        MovieCollection collection = null;
+        try (FileInputStream fileIn = new FileInputStream(filename);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) 
+        {
+            collection = (MovieCollection) in.readObject();
+            System.out.println("Movie collection deserialized from " + filename);
+        } catch (IOException | ClassNotFoundException e) 
+        {
+            e.printStackTrace();
+        }
+        return collection;
+    }
+
 
 }

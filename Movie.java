@@ -1,7 +1,10 @@
+import java.io.Serializable;
 import java.util.Comparator;
+import java.io.*;
 
 
-public class Movie
+
+public class Movie implements Serializable
 {
     private String title;
     private String director;
